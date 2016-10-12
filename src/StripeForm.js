@@ -24,7 +24,12 @@ const
     welcomeText: PropTypes.string,
   },
   defaultProps = {
-
+    zeroAmountText: 'Your order is empty',
+    stripeNotLoadedText: 'Unfortunately we are unable to process your payment',
+    waitText: 'Processing your payment. Please wait ...',
+    errorText: 'Houston, we have a problem!',
+    successText: 'Your payment has been made',
+    welcomeText: 'Please pay for your order',
   };
 
 class StripeForm extends Component {

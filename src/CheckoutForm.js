@@ -10,9 +10,9 @@
 import { connect } from 'react-redux';
 import StripeForm from './StripeForm';
 
-const mapStateToProps = ({ simpleform: { checkout } }) => (
+const mapStateToProps = ({ simpleform: { checkout } }, { amountPrefix = 'Pay £' }) => (
 checkout?{
-  submitText: `Pay £${checkout.order.amount}`,
+  submitText: `${amountPrefix}${(checkout.order.amount/100).toFixed(2)}`,
   isDisplayed: (!!checkout.order.amount) || checkout.status ==='success',
   status: checkout.status,
   msg: checkout.msg,

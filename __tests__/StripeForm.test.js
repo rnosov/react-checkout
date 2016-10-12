@@ -1,5 +1,5 @@
 /*
- * StripeForm Test Suit
+ * StripeForm Test Suite
  *
  * Copyright © Roman Nosov 2016
  *
