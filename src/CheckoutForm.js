@@ -13,23 +13,21 @@ import StripeForm from './StripeForm';
 const mapStateToProps = ({ simpleform: { checkout } }, { amountPrefix = 'Pay £' }) => (
 checkout?{
   submitText: `${amountPrefix}${(checkout.order.amount/100).toFixed(2)}`,
-  isDisplayed: (!!checkout.order.amount) || checkout.status ==='success',
-  status: checkout.status,
-  msg: checkout.msg,
-  spinner: checkout.spinner,
+  isDisplayed: (!!checkout.order.amount) || checkout.formStatus ==='success',
+  formStatus: checkout.formStatus,
+  formMsg: checkout.formMsg,
   order: checkout.order,
-  formType: 'checkout',
+  formName: 'checkout',
 }
-:{ isDisplayed: false, formType: 'checkout', }
+:{ isDisplayed: false, formName: 'checkout', }
 );
 
 const mapDispatchToProps = (dispatch) => ({
-  setStatus: (status = '', msg = false, spinner = false) => dispatch({
+  setStatus: (formStatus = '', formMsg = false, spinner = false) => dispatch({
     type: 'simpleform/SET_STATUS',
-    formType: 'checkout',
-    status,
-    msg,
-    spinner,
+    formName: 'checkout',
+    formStatus,
+    formMsg,
   }),
 });
 

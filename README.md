@@ -1,6 +1,6 @@
 # React Checkout
 
-Quickly create simple React checkout forms styled with Bootstrap 4. Bank cards are processed via [stripe.js](https://stripe.com/docs/stripe.js) low level library. Redux store is used to maintain internal state. Forms are generated using the [SimpleForm](https://www.npmjs.com/package/simpleform) package. 
+Quickly create simple React checkout forms styled for Bootstrap 4. Bank cards are processed via [stripe.js](https://stripe.com/docs/stripe.js) low level library. Redux store is used to maintain internal state. Forms are generated using the [SimpleForm](https://www.npmjs.com/package/simpleform) package. 
 
 ## Live Examples
 
@@ -12,6 +12,7 @@ Two examples are available:
 ## Introduction
 
 `react-checkout` is a package that is designed to simplify the process of making bespoke checkout pages. Alternatively, you could use Stripe's own Checkout widget to process card payments but it does have some issues:
+
 1. You will need to load the rather large Stripe Checkout library *before* you can even show Checkout UI. With this package you can bundle the checkout page with the rest of you code and show it immediately to the user. Low level lightweight `stripe.js` library will be asynchronously loaded only after `react-checkout` has been mounted.
 2. Stripe Checkout widget will redirect you to the Stripe web site on mobile devices.
 3. Stripe Checkout widget look and feel is not really customizable and it can look out of place on your web site. With this package you control checkout look and feel.
@@ -58,55 +59,30 @@ Somewhere in your component `render` method:
 ```javascript
 <Checkout 
   store={store}
-  testStripeKey="replace with your test public key"
-  liveStripeKey="replace with your live public key"
-  stripeEndpoint="https://example.com/"
   amountPrefix="Pay $"
-  schema={{
-    Name: {
-      required: true,
-      label: 'Name',
-      placeholder: 'John Doe',
-      autoComplete: 'cc-name',
-    },
-    Email: {
-      required: true,
-      type: 'email',
-      placeholder: 'john@example.com',
-    },
-    Phone: {
-      type: 'tel',
-      placeholder: '+44 207 123 4567',
-    },
-    number: {
-      label: 'Card Number',
-      placeholder: '4242 4242 4242 4242',
-      hint: 'Long number on the front of your card',
-    },
-    cvc: {
-      label: 'CVC',
-      placeholder: '123',
-      hint: 'The 3 digits to the right of the signature strip located on the back of your card',
-    },
-    exp: {
-      label: 'Expiry',
-      placeholder: '10/17',
-    },
-    Address: {
-      required: true,
-      type: '6',
-      placeholder: '1 Chapel Hill, Heswall, BOURNEMOUTH, UK, BH1 1AA',
-      hint: 'The address where your order will be shipped',
-    },
-  }}
+  testStripeKey="pk_test_ry8ALrWRqEItYo3DQDAOynVH"
+  liveStripeKey="pk_live_czjLJx8fbS6L6KvQIlItvPvY"
+  endpoint="https://3kh1a4zr83.execute-api.eu-west-1.amazonaws.com/prod/v1/stripe/create"
+  fields={[
+    "name=*|John Doe",
+    "email=*email|john@example.com",
+    "phone=tel|+44 207 123 4567",
+    "number=*|4242 4242 4242 4242|Long number on the front of your card|Card Number",
+    "cvc=*|123|The 3 digits to the right of the signature strip located on the back of your card|CVC",
+    "exp=*|10/17||Expiry Date",
+    "address=*6|1 Chapel Hill, Heswall, BOURNEMOUTH, UK, BH1 1AA|The address where your order will be shipped",
+  ]}
 />
 ```
+
+Form fields named `number`, `cvc` and `exp` are required and must be present for Checkout to function. 
+Refer to [SimpleForm](https://www.npmjs.com/package/simpleform) docs on how to create form fields.
 
 ## Documentation
 
 ### Checkout Properties
 
-- `stripeEndpoint` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**. RESTful API endpoint that should parse JSON object in the `POST` body. The JSON object sent will look like this:
+- `endpoint` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**. RESTful API endpoint that should parse JSON object in the `POST` body. The JSON object sent will look like this:
 
 ```javascript
 {
@@ -116,8 +92,23 @@ Somewhere in your component `render` method:
   // Card details will NOT be sent.
 }
 ```
+The endpoint should set `success` key to `true` to indicate successful payment:
+
+```javascript
+{
+  "success": true
+}
+```
+
+or error message otherwise:
+
+```javascript
+{
+  "message": "Payment failed"
+}
+```
+
 **Required**.
-- `schema` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** [SimpleForm](https://www.npmjs.com/package/simpleform) Schema. It must have the following fields: `number`, `cvc` and `exp`. See examples above. **Required**.
 - `testStripeKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**. Public Stripe API test key. **Required**.
 - `liveStripeKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**. Public Stripe API live key. **Required**.
 - `amountPrefix` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**. Text displayed on the form submit button in front of the amount. Defaults to "Pay £". **Optional**.
@@ -127,6 +118,7 @@ Somewhere in your component `render` method:
 - `errorText` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text displayed when form has encountered errors on upload. Defaults to "Houston, we have a problem!". **Optional**.
 - `successText` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text displayed when form is uploaded without any issues. Defaults to "Your payment has been made". **Optional**.
 - `welcomeText` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text displayed when form is initially displayed. Defaults to "Please pay for your order". **Optional**.
+- `invalidFieldText` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text displayed when field fails Stripe validation. Defaults to "This field is invalid". **Optional**.
 
 ### Checkout Children
 
@@ -192,47 +184,19 @@ class App extends Component {
         <div className="container">   
           <Checkout 
             store={store}
-            testStripeKey="replace with your test public key"
-            liveStripeKey="replace with your live public key"
-            stripeEndpoint="https://example.com/"
             amountPrefix="Pay $"
-            schema={{
-              Name: {
-                required: true,
-                label: 'Name',
-                placeholder: 'John Doe',
-                autoComplete: 'cc-name',
-              },
-              Email: {
-                required: true,
-                type: 'email',
-                placeholder: 'john@example.com',
-              },
-              Phone: {
-                type: 'tel',
-                placeholder: '+44 207 123 4567',
-              },
-              number: {
-                label: 'Card Number',
-                placeholder: '4242 4242 4242 4242',
-                hint: 'Long number on the front of your card',
-              },
-              cvc: {
-                label: 'CVC',
-                placeholder: '123',
-                hint: 'The 3 digits to the right of the signature strip located on the back of your card',
-              },
-              exp: {
-                label: 'Expiry',
-                placeholder: '10/17',
-              },
-              Address: {
-                required: true,
-                type: '6',
-                placeholder: '1 Chapel Hill, Heswall, BOURNEMOUTH, UK, BH1 1AA',
-                hint: 'The address where your order will be shipped',
-              },
-            }}
+            testStripeKey="pk_test_ry8ALrWRqEItYo3DQDAOynVH"
+            liveStripeKey="pk_live_czjLJx8fbS6L6KvQIlItvPvY"
+            endpoint="https://3kh1a4zr83.execute-api.eu-west-1.amazonaws.com/prod/v1/stripe/create"
+            fields={[
+              "name=*|John Doe",
+              "email=*email|john@example.com",
+              "phone=tel|+44 207 123 4567",
+              "number=*|4242 4242 4242 4242|Long number on the front of your card|Card Number",
+              "cvc=*|123|The 3 digits to the right of the signature strip located on the back of your card|CVC",
+              "exp=*|10/17||Expiry Date",
+              "address=*6|1 Chapel Hill, Heswall, BOURNEMOUTH, UK, BH1 1AA|The address where your order will be shipped",              
+            ]}
           />
         </div>
       </div>

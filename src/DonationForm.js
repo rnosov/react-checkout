@@ -9,24 +9,21 @@
 
 import { connect } from 'react-redux';
 import StripeForm from './StripeForm';
-
+const order = { description: 'donation' };
 const mapStateToProps = ({ simpleform: { donation } }) => ({
-  order: { description: 'donation' },
+  order,
   isDisplayed: true,
-  status: donation? donation.status : '',
-  msg: donation? donation.msg :  false,
-  spinner: donation? donation.spinner: false,
-  formType: 'donation',
-
+  formStatus: donation? donation.formStatus : '',
+  formMsg: donation? donation.formMsg :  false,
+  formName: 'donation',
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setStatus: (status = '', msg = false, spinner = false) => dispatch({
+  setStatus: (formStatus = '', formMsg = false) => dispatch({
     type: 'simpleform/SET_STATUS',
-    formType: 'donation',
-    status,
-    msg,
-    spinner,
+    formName: 'donation',
+    formStatus,
+    formMsg,
   }),
 });
 
