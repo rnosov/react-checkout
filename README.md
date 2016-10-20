@@ -6,8 +6,8 @@ Quickly create simple React checkout forms styled for Bootstrap 4. Bank cards ar
 
 Two examples are available: 
 
-1. [Donation Form](https://www.solarleague.org/about/donations/)
-2. [Checkout](https://www.solarleague.org/shop/macbook-case/) - In order to be able to see the Checkout page you'll need to add some products to the shopping cart. To do it, press green "Add to Cart" button. Next, press blue "Checkout" button.
+1. [Donation Form](https://www.solarleague.org/about/donations/) - donation form example
+2. [Checkout](https://www.solarleague.org/shop/macbook-case/) - In order to see the Checkout page you'll need to add some products to the shopping cart. To do it, press green "Add to Cart" button. Next, press blue "Checkout" button.
 
 ## Introduction
 
@@ -130,7 +130,8 @@ Use this redux action to specify the particulars of the order. It takes one argu
 
 ```javascript
 import { order } from 'react-checkout'; 
-order({ amount: 10000, description: 'Green widget' }); // ordering a green widget which costs 100.00
+// import Redux store
+store.dispatch(order({ amount: 10000, description: 'Green widget' })); // ordering a green widget which costs 100.00
 ```
 
 ### Universal Rendering
